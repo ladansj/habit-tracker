@@ -6,6 +6,6 @@ export default defineConfig({
   optimizeDeps: {
     include: ['jalaali-js']
   },
-  base: '/habit-tracker/', // برای GitHub Pages - اگر repository name شما متفاوت است، تغییر دهید
+  base: '/habit-tracker/', 
 })
 
