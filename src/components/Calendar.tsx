@@ -21,7 +21,7 @@ export default function Calendar() {
   const [calendarType, setCalendarType] = useState<CalendarType>('jalali')
   const { habits, toggleHabitDate, isHabitCompleted } = useHabits()
 
-  // محاسبه تاریخ‌های ماه بر اساس نوع تقویم
+ 
   const getMonthData = () => {
     if (calendarType === 'jalali') {
       const jalali = toJalaliDate(currentDate)
@@ -29,7 +29,7 @@ export default function Calendar() {
       const monthEnd = endOfJalaliMonth(jalali.jy, jalali.jm)
       const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd })
       
-      // محاسبه روز هفته شروع ماه (شنبه = 0)
+      
       const firstDayWeekday = getJalaliWeekday(monthStart)
       const emptyDays = Array.from({ length: firstDayWeekday }, (_, i) => i)
       
