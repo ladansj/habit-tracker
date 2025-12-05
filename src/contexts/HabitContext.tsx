@@ -5,7 +5,7 @@ export interface Habit {
   id: string
   name: string
   color: string
-  completedDates: string[] // تاریخ‌های تکمیل شده به صورت YYYY-MM-DD
+  completedDates: string[] 
   createdAt: string
 }
 
@@ -108,7 +108,7 @@ export function HabitProvider({ children }: { children: ReactNode }) {
     let checkDate = new Date(today)
     let foundTodayOrYesterday = false
 
-    // بررسی امروز یا دیروز برای شروع streak
+    
     for (const date of sortedDates) {
       const diffDays = Math.floor((checkDate.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
       
@@ -119,22 +119,22 @@ export function HabitProvider({ children }: { children: ReactNode }) {
           checkDate = new Date(date)
           checkDate.setDate(checkDate.getDate() - 1)
         } else if (diffDays === 0) {
-          // اگر امروز تکمیل شده، ادامه می‌دهیم
+          
           checkDate = new Date(date)
           checkDate.setDate(checkDate.getDate() - 1)
         } else {
-          // روز بعدی در streak پیدا شد
+          
           streak++
           checkDate = new Date(date)
           checkDate.setDate(checkDate.getDate() - 1)
         }
       } else if (foundTodayOrYesterday) {
-        // اگر streak شروع شده و روز بعدی پیدا نشد، streak تمام شده
+        
         break
       }
     }
 
-    // اگر streak شروع نشده، یعنی امروز و دیروز تکمیل نشده
+    
     if (!foundTodayOrYesterday) {
       return 0
     }
