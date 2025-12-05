@@ -14,25 +14,25 @@ export default function StatsDashboard() {
   const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd })
   const monthDays = eachDayOfInterval({ start: monthStart, end: monthEnd })
 
-  // آمار هفته جاری
+  
   const weekCompleted = weekDays.reduce((sum, day) => {
     return sum + habits.filter(habit => isHabitCompleted(habit.id, day)).length
   }, 0)
   const weekTotal = habits.length * weekDays.length
   const weekPercentage = weekTotal > 0 ? Math.round((weekCompleted / weekTotal) * 100) : 0
 
-  // آمار ماه جاری
+
   const monthCompleted = monthDays.reduce((sum, day) => {
     return sum + habits.filter(habit => isHabitCompleted(habit.id, day)).length
   }, 0)
   const monthTotal = habits.length * monthDays.length
   const monthPercentage = monthTotal > 0 ? Math.round((monthCompleted / monthTotal) * 100) : 0
 
-  // آمار امروز
+  
   const todayCompleted = habits.filter(habit => isHabitCompleted(habit.id, today)).length
   const todayPercentage = habits.length > 0 ? Math.round((todayCompleted / habits.length) * 100) : 0
 
-  // بهترین عادت‌ها
+  
   const habitsWithStats = habits.map(habit => ({
     ...habit,
     streak: getHabitStreak(habit.id),
