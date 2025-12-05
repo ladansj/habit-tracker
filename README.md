@@ -48,12 +48,25 @@ npm run dev
  ## 🌐 نمایش آنلاین
 
 برای مشاهده نسخه زنده برنامه:
-- 🔗 [GitHub Pages](https://ladansj.github.io/habit-tracker) (بعد از فعال‌سازی)
-- یا از Netlify/Vercel برای deploy استفاده کنید
+- 🔗 [GitHub Pages](https://ladansj.github.io/habit-tracker)
+
 
 ## 📸 تصاویر
+<img width="915" height="777" alt="Screenshot 1404-09-14 at 20 33 39" src="https://github.com/user-attachments/assets/0f0425d0-e7f2-48af-9ea9-9fd6c2fe94db" />
+<img width="915" height="777" alt="Screenshot 1404-09-14 at 20 34 37" src="https://github.com/user-attachments/assets/708e33ce-0451-46a5-ad55-921409e1f050" />
+<img width="915" height="777" alt="Screenshot 1404-09-14 at 20 36 18" src="https://github.com/user-attachments/assets/e74b866c-6894-47cd-9484-b797e2f8a5ce" />
+<img width="915" height="777" alt="Screenshot 1404-09-14 at 20 34 05" src="https://github.com/user-attachments/assets/fe0820f3-14cf-404d-8638-8bd3e077c6fb" />
+<img width="915" height="777" alt="Screenshot 1404-09-14 at 20 33 09" src="https://github.com/user-attachments/assets/3c3fb9cd-d635-49be-b7d4-2df0c2d5fc80" />
+<img width="915" height="777" alt="Screenshot 1404-09-14 at 20 32 18" src="https://github.com/user-attachments/assets/354a4b17-597f-41b6-b7a5-3c59a01ace81" />
+<img width="915" height="777" alt="Screenshot 1404-09-14 at 20 32 40" src="https://github.com/user-attachments/assets/5e32fe31-e1a4-4737-9e63-198550110d91" />
+<img width="915" height="777" alt="Screenshot 1404-09-14 at 20 37 02" src="https://github.com/user-attachments/assets/d1a49440-a768-44c2-b9db-ada09a6a5e34" />
+<img width="915" height="777" alt="Screenshot 1404-09-14 at 20 35 30" src="https://github.com/user-attachments/assets/68871c98-ef77-48b8-8428-862ef700f63d" />
+<img width="915" height="777" alt="Screenshot 1404-09-14 at 20 31 54" src="https://github.com/user-attachments/assets/4539f0d3-1b59-4a80-bf49-0f730495917f" />
 
-(می‌توانید اسکرین‌شات‌های برنامه را اینجا اضافه کنید)
+
+
+
+
 
 ## 📄 مجوز
 
@@ -63,7 +76,7 @@ npm run dev
 
 **لادن مندنی پور**
 
-- GitHub: [@YOUR_USERNAME](https://github.com/ladansj)
+- GitHub: [@ladansj](https://github.com/ladansj)
 
 ---
 
