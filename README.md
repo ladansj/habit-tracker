@@ -63,10 +63,7 @@ npm run dev
 <img width="915" height="777" alt="Screenshot 1404-09-14 at 20 35 30" src="https://github.com/user-attachments/assets/68871c98-ef77-48b8-8428-862ef700f63d" />
 <img width="915" height="777" alt="Screenshot 1404-09-14 at 20 31 54" src="https://github.com/user-attachments/assets/4539f0d3-1b59-4a80-bf49-0f730495917f" />
 
-
-
-
-
+<img width="1425" height="803" alt="Screenshot 1404-09-14 at 20 47 54" src="https://github.com/user-attachments/assets/3571cc59-5722-4b75-8219-dedff5de249b" />
 
 ## 📄 مجوز
 
