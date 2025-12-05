@@ -20,12 +20,10 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       return
     }
 
-    // برای مرورگرهای معمولی، نوتیفیکیشن در زمان مشخص نمایش داده می‌شود
-    // این یک پیاده‌سازی ساده است - در تولید باید از Service Worker استفاده شود
     const now = new Date()
     const tomorrow = new Date(now)
     tomorrow.setDate(tomorrow.getDate() + 1)
-    tomorrow.setHours(9, 0, 0, 0) // ساعت 9 صبح
+    tomorrow.setHours(9, 0, 0, 0) 
 
     const timeUntilNotification = tomorrow.getTime() - now.getTime()
 
