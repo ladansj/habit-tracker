@@ -21,24 +21,24 @@ export default function DataManager() {
     const pageHeight = doc.internal.pageSize.getHeight()
     let yPosition = 20
 
-    // عنوان
+    
     doc.setFontSize(20)
     doc.setTextColor(79, 70, 229)
     doc.text('گزارش پیشرفت عادت‌ها', pageWidth / 2, yPosition, { align: 'center' })
     yPosition += 15
 
-    // تاریخ گزارش
+    
     doc.setFontSize(10)
     doc.setTextColor(100, 100, 100)
     doc.text(`تاریخ گزارش: ${format(new Date(), 'yyyy/MM/dd')}`, pageWidth / 2, yPosition, { align: 'center' })
     yPosition += 15
 
-    // خط جداکننده
+    
     doc.setDrawColor(200, 200, 200)
     doc.line(20, yPosition, pageWidth - 20, yPosition)
     yPosition += 10
 
-    // آمار کلی
+   
     doc.setFontSize(14)
     doc.setTextColor(0, 0, 0)
     doc.text('📊 آمار کلی', 20, yPosition)
@@ -62,13 +62,13 @@ export default function DataManager() {
     doc.text(`این ماه: ${monthPercentage}% تکمیل (${monthCompleted} از ${monthTotal})`, 25, yPosition)
     yPosition += 10
 
-    // لیست عادت‌ها
+    
     doc.setFontSize(14)
     doc.text('📋 لیست عادت‌ها', 20, yPosition)
     yPosition += 10
 
     habits.forEach((habit, index) => {
-      // بررسی اگر نیاز به صفحه جدید است
+      
       if (yPosition > pageHeight - 40) {
         doc.addPage()
         yPosition = 20
@@ -78,7 +78,7 @@ export default function DataManager() {
       const progress30 = getHabitProgress(habit.id, 30)
       const progress7 = getHabitProgress(habit.id, 7)
 
-      // رنگ عادت (مربع کوچک)
+      
       doc.setFillColor(
         parseInt(habit.color.slice(1, 3), 16),
         parseInt(habit.color.slice(3, 5), 16),
@@ -105,7 +105,7 @@ export default function DataManager() {
       yPosition += 3
     })
 
-    // جدول پیشرفت هفتگی
+    
     yPosition += 5
     if (yPosition > pageHeight - 60) {
       doc.addPage()
@@ -155,7 +155,7 @@ export default function DataManager() {
       yPosition += 6
     })
 
-    // پاورقی
+    
     const totalPages = doc.getNumberOfPages()
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i)
@@ -169,7 +169,7 @@ export default function DataManager() {
       )
     }
 
-    // ذخیره PDF
+    
     doc.save(`گزارش-عادت‌ها-${format(new Date(), 'yyyy-MM-dd')}.pdf`)
   }
 
