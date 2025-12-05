@@ -26,7 +26,7 @@ export default function ProgressChart() {
         startDate = subDays(today, 89)
         break
       default:
-        // برای 'all'، از تاریخ ایجاد اولین عادت استفاده می‌کنیم
+        
         if (habits.length > 0) {
           const oldestHabit = habits.reduce((oldest, habit) => 
             new Date(habit.createdAt) < new Date(oldest.createdAt) ? habit : oldest
@@ -42,7 +42,7 @@ export default function ProgressChart() {
 
   const dateRange = getDateRange()
 
-  // داده‌های کلی
+  
   const overallData = dateRange.map(date => {
     const completedCount = habits.filter(habit => isHabitCompleted(habit.id, date)).length
     const totalHabits = habits.length
@@ -58,7 +58,7 @@ export default function ProgressChart() {
     }
   })
 
-  // داده‌های هر عادت
+  
   const individualData = dateRange.map(date => {
     const dataPoint: any = {
       date: format(date, 'MM/dd'),
@@ -73,7 +73,7 @@ export default function ProgressChart() {
     return dataPoint
   })
 
-  // محاسبه آمار
+ 
   const totalDays = overallData.length
   const averageCompletion = totalDays > 0 
     ? Math.round(overallData.reduce((sum, day) => sum + day['درصد تکمیل'], 0) / totalDays)
@@ -87,7 +87,7 @@ export default function ProgressChart() {
   const totalPossible = totalDays * habits.length
   const overallPercentage = totalPossible > 0 ? Math.round((totalCompleted / totalPossible) * 100) : 0
 
-  // محاسبه streak
+  
   const streaks = habits.map(habit => ({
     name: habit.name,
     streak: getHabitStreak(habit.id),
