@@ -1,11 +1,18 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { format } from 'date-fns'
+```tsx
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from 'react'
+import { format, differenceInCalendarDays, subDays } from 'date-fns'
 
 export interface Habit {
   id: string
   name: string
   color: string
-  completedDates: string[] 
+  completedDates: string[]
   createdAt: string
 }
 
@@ -24,142 +31,407 @@ interface HabitContextType {
 
 const HabitContext = createContext<HabitContextType | undefined>(undefined)
 
-export function HabitProvider({ children }: { children: ReactNode }) {
-  const [habits, setHabits] = useState<Habit[]>(() => {
-    const saved = localStorage.getItem('habits')
-    return saved ? JSON.parse(saved) : []
-  })
+
+const STORAGE_KEY = 'habits'
+
+
+const toDateString = (date: Date): string => {
+  return format(date, 'yyyy-MM-dd')
+}
+
+const isValidDateString = (value: unknown): value is string => {
+  if (typeof value !== 'string') {
+    return false
+  }
+
+  return /^\d{4}-\d{2}-\d{2}$/.test(value)
+}
+
+const isValidHabit = (value: unknown): value is Habit => {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+
+  const habit = value as Record<string, unknown>
+
+  return (
+    typeof habit.id === 'string' &&
+    habit.id.trim().length > 0 &&
+    typeof habit.name === 'string' &&
+    habit.name.trim().length > 0 &&
+    typeof habit.color === 'string' &&
+    habit.color.trim().length > 0 &&
+    Array.isArray(habit.completedDates) &&
+    habit.completedDates.every(isValidDateString) &&
+    typeof habit.createdAt === 'string' &&
+    !Number.isNaN(Date.parse(habit.createdAt))
+  )
+}
+
+
+const validateAndNormalizeHabits = (data: unknown): Habit[] => {
+  if (!Array.isArray(data)) {
+    throw new Error('فرمت داده نامعتبر است')
+  }
+
+  const validHabits = data.filter(isValidHabit)
+
+  if (validHabits.length !== data.length) {
+    throw new Error('برخی از داده‌های واردشده ساختار معتبری ندارند')
+  }
+
+  return validHabits.map(habit => ({
+    ...habit,
+
+    name: habit.name.trim(),
+
+    completedDates: Array.from(
+      new Set(habit.completedDates)
+    ).sort(),
+  }))
+}
+
+
+const loadHabits = (): Habit[] => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+
+    if (!saved) {
+      return []
+    }
+
+    const parsed: unknown = JSON.parse(saved)
+
+    if (!Array.isArray(parsed)) {
+      console.warn('داده‌های ذخیره‌شده ساختار معتبری ندارند')
+      return []
+    }
+
+    const validHabits = parsed.filter(isValidHabit)
+
+    if (validHabits.length !== parsed.length) {
+      console.warn(
+        'برخی از عادت‌های ذخیره‌شده معتبر نبودند و نادیده گرفته شدند'
+      )
+    }
+
+    return validHabits.map(habit => ({
+      ...habit,
+      completedDates: Array.from(
+        new Set(habit.completedDates)
+      ).sort(),
+    }))
+  } catch (error) {
+    console.error('خطا در خواندن داده‌های Local Storage:', error)
+    return []
+  }
+}
+
+
+const saveHabits = (habits: Habit[]): void => {
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(habits)
+    )
+  } catch (error) {
+    console.error('خطا در ذخیره داده‌ها:', error)
+  }
+}
+
+export function HabitProvider({
+  children,
+}: {
+  children: ReactNode
+}) {
+
+  const [habits, setHabits] = useState<Habit[]>(
+    loadHabits
+  )
 
   useEffect(() => {
-    localStorage.setItem('habits', JSON.stringify(habits))
+    saveHabits(habits)
   }, [habits])
 
-  const addHabit = (name: string, color: string) => {
+  const addHabit = (
+    name: string,
+    color: string
+  ) => {
+
+    const trimmedName = name.trim()
+
+    if (!trimmedName) {
+      return
+    }
+
     const newHabit: Habit = {
       id: Date.now().toString(),
-      name,
+      name: trimmedName,
       color,
       completedDates: [],
       createdAt: new Date().toISOString(),
     }
-    setHabits(prev => [...prev, newHabit])
+
+    setHabits(prev => [
+      ...prev,
+      newHabit,
+    ])
   }
 
   const deleteHabit = (id: string) => {
-    setHabits(prev => prev.filter(h => h.id !== id))
+
+    setHabits(prev =>
+      prev.filter(
+        habit => habit.id !== id
+      )
+    )
   }
 
-  const toggleHabitDate = (habitId: string, date: Date) => {
-    const dateStr = format(date, 'yyyy-MM-dd')
+
+  const toggleHabitDate = (
+    habitId: string,
+    date: Date
+  ) => {
+
+    const dateStr = toDateString(date)
+
     setHabits(prev =>
       prev.map(habit => {
-        if (habit.id === habitId) {
-          const isCompleted = habit.completedDates.includes(dateStr)
-          return {
-            ...habit,
-            completedDates: isCompleted
-              ? habit.completedDates.filter(d => d !== dateStr)
-              : [...habit.completedDates, dateStr],
-          }
+
+        if (habit.id !== habitId) {
+          return habit
         }
-        return habit
+
+        const isCompleted =
+          habit.completedDates.includes(
+            dateStr
+          )
+
+        return {
+          ...habit,
+
+          completedDates: isCompleted
+            ? habit.completedDates.filter(
+                date => date !== dateStr
+              )
+            : [
+                ...habit.completedDates,
+                dateStr,
+              ].sort(),
+        }
       })
     )
   }
 
-  const isHabitCompleted = (habitId: string, date: Date): boolean => {
-    const habit = habits.find(h => h.id === habitId)
-    if (!habit) return false
-    const dateStr = format(date, 'yyyy-MM-dd')
-    return habit.completedDates.includes(dateStr)
+
+  const isHabitCompleted = (
+    habitId: string,
+    date: Date
+  ): boolean => {
+
+    const habit = habits.find(
+      habit => habit.id === habitId
+    )
+
+    if (!habit) {
+      return false
+    }
+
+    const dateStr = toDateString(date)
+
+    return habit.completedDates.includes(
+      dateStr
+    )
   }
 
-  const getHabitProgress = (habitId: string, days: number): number => {
-    const habit = habits.find(h => h.id === habitId)
-    if (!habit) return 0
-    
-    const today = new Date()
-    const dates = habit.completedDates.filter(dateStr => {
-      const date = new Date(dateStr)
-      const diffTime = today.getTime() - date.getTime()
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-      return diffDays < days
-    })
-    
-    return Math.round((dates.length / days) * 100)
-  }
+  const getHabitProgress = (
+    habitId: string,
+    days: number
+  ): number => {
 
-  const getHabitStreak = (habitId: string): number => {
-    const habit = habits.find(h => h.id === habitId)
-    if (!habit || habit.completedDates.length === 0) return 0
+    const habit = habits.find(
+      habit => habit.id === habitId
+    )
 
-    const sortedDates = habit.completedDates
-      .map(d => {
-        const date = new Date(d)
-        date.setHours(0, 0, 0, 0)
-        return date
-      })
-      .sort((a, b) => b.getTime() - a.getTime())
+    if (
+      !habit ||
+      !Number.isInteger(days) ||
+      days <= 0
+    ) {
+      return 0
+    }
+
 
     const today = new Date()
-    today.setHours(0, 0, 0, 0)
 
-    let streak = 0
-    let checkDate = new Date(today)
-    let foundTodayOrYesterday = false
 
-    
-    for (const date of sortedDates) {
-      const diffDays = Math.floor((checkDate.getTime() - date.getTime()) / (1000 * 60 * 60 * 24))
-      
-      if (diffDays === 0 || diffDays === 1) {
-        if (!foundTodayOrYesterday) {
-          foundTodayOrYesterday = true
-          streak = 1
-          checkDate = new Date(date)
-          checkDate.setDate(checkDate.getDate() - 1)
-        } else if (diffDays === 0) {
-          
-          checkDate = new Date(date)
-          checkDate.setDate(checkDate.getDate() - 1)
-        } else {
-          
-          streak++
-          checkDate = new Date(date)
-          checkDate.setDate(checkDate.getDate() - 1)
-        }
-      } else if (foundTodayOrYesterday) {
-        
-        break
+    const completedDays =
+      new Set(
+        habit.completedDates
+      )
+
+
+    let completedCount = 0
+
+
+    for (
+      let i = 0;
+      i < days;
+      i++
+    ) {
+
+      const date =
+        subDays(today, i)
+
+      const dateStr =
+        toDateString(date)
+
+      if (
+        completedDays.has(dateStr)
+      ) {
+        completedCount++
       }
     }
 
-    
-    if (!foundTodayOrYesterday) {
+
+    return Math.min(
+      100,
+      Math.round(
+        (completedCount / days) * 100
+      )
+    )
+  }
+
+  const getHabitStreak = (
+    habitId: string
+  ): number => {
+
+    const habit = habits.find(
+      habit => habit.id === habitId
+    )
+
+    if (
+      !habit ||
+      habit.completedDates.length === 0
+    ) {
       return 0
     }
+
+
+    const completedDays =
+      new Set(
+        habit.completedDates
+      )
+
+
+    const today =
+      new Date()
+
+
+    const todayStr =
+      toDateString(today)
+
+
+    const yesterdayStr =
+      toDateString(
+        subDays(today, 1)
+      )
+
+
+    if (
+      !completedDays.has(todayStr) &&
+      !completedDays.has(yesterdayStr)
+    ) {
+      return 0
+    }
+
+
+    let checkDate =
+      completedDays.has(todayStr)
+        ? today
+        : subDays(today, 1)
+
+
+    let streak = 0
+
+
+    while (
+      completedDays.has(
+        toDateString(checkDate)
+      )
+    ) {
+
+      streak++
+
+      checkDate =
+        subDays(checkDate, 1)
+    }
+
 
     return streak
   }
 
   const getTotalStreak = (): number => {
-    if (habits.length === 0) return 0
-    return Math.min(...habits.map(h => getHabitStreak(h.id)))
+
+    if (habits.length === 0) {
+      return 0
+    }
+
+    return Math.max(
+      ...habits.map(
+        habit => getHabitStreak(habit.id)
+      )
+    )
   }
 
   const exportData = (): string => {
-    return JSON.stringify(habits, null, 2)
+
+    return JSON.stringify(
+      habits,
+      null,
+      2
+    )
   }
 
-  const importData = (data: string) => {
+
+  const importData = (
+    data: string
+  ) => {
+
     try {
-      const parsed = JSON.parse(data)
-      if (Array.isArray(parsed)) {
-        setHabits(parsed)
-      }
+
+      const parsed: unknown =
+        JSON.parse(data)
+
+
+      const validatedHabits =
+        validateAndNormalizeHabits(
+          parsed
+        )
+
+
+      setHabits(
+        validatedHabits
+      )
+
     } catch (error) {
-      console.error('خطا در وارد کردن داده:', error)
-      throw new Error('فرمت داده نامعتبر است')
+
+      console.error(
+        'خطا در وارد کردن داده:',
+        error
+      )
+
+
+      if (
+        error instanceof Error
+      ) {
+        throw error
+      }
+
+
+      throw new Error(
+        'فرمت داده نامعتبر است'
+      )
     }
   }
 
@@ -183,11 +455,21 @@ export function HabitProvider({ children }: { children: ReactNode }) {
   )
 }
 
+
 export function useHabits() {
-  const context = useContext(HabitContext)
+
+  const context =
+    useContext(HabitContext)
+
+
   if (context === undefined) {
-    throw new Error('useHabits must be used within a HabitProvider')
+
+    throw new Error(
+      'useHabits must be used within a HabitProvider'
+    )
   }
+
+
   return context
 }
-
+```
